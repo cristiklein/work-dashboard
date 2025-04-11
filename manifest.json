@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Work Dashboard",
+  "version": "1.0",
+  "description": "A productivity dashboard for your work day.",
+  "action": {
+    "default_icon": {
+      "16": "icons/icon.png",
+      "48": "icons/icon.png",
+      "128": "icons/icon.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "oauth2": {
+    "client_id": "1066771758158-m4inbvn81dddpvfv70s1eo0l1dhuu5t7.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/calendar.readonly",
+      "https://www.googleapis.com/auth/drive.readonly",
+      "https://www.googleapis.com/auth/tasks.readonly"
+    ]
+  },
+  "host_permissions": [
+    "https://*.network/*"
+  ],
+  "permissions": [
+    "storage",
+    "identity",
+    "scripting"
+  ]
+}

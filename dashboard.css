@@ -1,0 +1,76 @@
+:root {
+  --main-bg-color: #1d1f21;
+  --main-fg-color: #c9cacc;
+  --primary-fg-color: #2bbc8a;
+  --secondary-fg-color: #d480aa;
+  --disabled-fg-color: grey;
+  --error-bg-color: #1d1f21;
+  --error-fg-color: red;
+}
+
+body {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: auto;
+  max-width: 900px;
+
+  background-color: var(--main-bg-color);
+  color: var(--main-fg-color);
+}
+
+section {
+  flex-grow: 1;
+  width: 250px;
+  border: 1px dashed white;
+  margin: 5px;
+  padding: 5px;
+}
+
+.configuration {
+  width: 900px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+ul {
+  padding-left: 10px;
+}
+
+li {
+  list-style-type: circle;
+}
+
+a {
+  color: var(--main-fg-color);
+  text-decoration: none;
+  background-image: linear-gradient(transparent,transparent 5px,var(--main-fg-color) 5px,var(--main-fg-color));
+  background-position: bottom;
+  background-size: 100% 6px;
+  background-repeat: repeat-x
+}
+
+a:hover {
+  background-image: linear-gradient(transparent,transparent 4px,var(--secondary-fg-color) 4px,var(--secondary-fg-color))
+}
+
+div.item {
+  padding-left: 20px;
+  text-indent: -20px;
+}
+
+div.event-now > a {
+  color: var(--primary-fg-color);
+}
+
+div.event-elapsed > a {
+  color: var(--disabled-fg-color);
+}
+
+.error {
+  color: var(--error-fg-color);
+  background-color: var(--error-bg-color);
+}
