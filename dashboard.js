@@ -1,3 +1,5 @@
+import { stripPathFromUrl } from './utils.js';
+
 const REFRESH_INTERVAL = 5 * 60 * 1000;
 
 const config = {
@@ -325,11 +327,6 @@ async function renderConfluenceTasks(container, items) {
   }
 
   renderItems(container, items);
-}
-
-function stripPathFromUrl(url) {
-  const u = new URL(url);
-  return u.origin; // returns protocol + host + port if present
 }
 
 /* Resolve the response or throw ReauthRequested */
