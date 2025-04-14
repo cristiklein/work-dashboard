@@ -304,7 +304,7 @@ async function fetchConfluenceTasks() {
     },
     mode: 'no-cors',
   });
-  const response = await handleReauth(responseOrReauth);
+  const response = handleReauth(responseOrReauth);
 
   const data = await response.json();
 
@@ -330,17 +330,8 @@ async function renderConfluenceTasks(container, items) {
 }
 
 /* Resolve the response or throw ReauthRequested */
-async function handleReauth(responseOrReauth) {
-  console.log(responseOrReauth);
-  let response;
-  try {
-    response = await responseOrReauth;
-    console.log(response);
-  }
-  catch (e) {
-    console.error('Reauth detected:', e);
-    throw new ReauthRequested(stripPathFromUrl(response.url));
-  }
+function handleReauth(responseOrReauth) {
+  const response = responseOrReauth;
   /* https://fetch.spec.whatwg.org/#concept-filtered-response-opaque-redirect */
   if (response.status === 0 || response.status === 404) {
     console.log('Reauth detected:', response);
@@ -359,13 +350,13 @@ async function fetchJiraIssues() {
   if (!token)
     throw new MissingConfiguration("Configure a Jira token");
 
-  const responseOrReauth = fetch(url, {
+  const responseOrReauth = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
     },
   });
-  const response = await handleReauth(responseOrReauth);
+  const response = handleReauth(responseOrReauth);
 
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
