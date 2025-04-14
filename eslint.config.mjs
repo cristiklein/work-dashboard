@@ -6,6 +6,18 @@ import css from "@eslint/css";
 
 
 export default defineConfig([
+  {
+    files: ["babel.config.js"],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
+    files: ["**/*.test.js"],
+    languageOptions: {
+      globals: globals.jest,
+    },
+  },
   { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"] },
   {
     files: ["**/*.{js,mjs,cjs}"],
