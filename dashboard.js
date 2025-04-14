@@ -25,6 +25,14 @@ class MissingConfiguration extends Error {
   }
 }
 
+class ReauthRequested extends Error {
+  constructor(location, ...params) {
+    super(...params);
+    this.name = "ReauthRequested";
+    this.location = location;
+  }
+}
+
 function generateLoremWords(wordCount = 5) {
     const loremWords = [
         "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
@@ -287,13 +295,14 @@ async function fetchConfluenceTasks() {
   const token = await config.getStoredToken('confluence');
   if (!token)
     throw new MissingConfiguration('Configure the Confluence token.');
-  const response = await fetch(taskListUrl, {
+  const responseOrReauth = await fetch(taskListUrl, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Accept': 'application/json'
     },
-    mode: 'no-cors'
+    mode: 'no-cors',
   });
+  const response = await handleReauth(responseOrReauth);
 
   const data = await response.json();
 
@@ -318,6 +327,31 @@ async function renderConfluenceTasks(container, items) {
   renderItems(container, items);
 }
 
+function stripPathFromUrl(url) {
+  const u = new URL(url);
+  return u.origin; // returns protocol + host + port if present
+}
+
+/* Resolve the response or throw ReauthRequested */
+async function handleReauth(responseOrReauth) {
+  console.log(responseOrReauth);
+  let response;
+  try {
+    response = await responseOrReauth;
+    console.log(response);
+  }
+  catch (e) {
+    console.error('Reauth detected:', e);
+    throw new ReauthRequested(stripPathFromUrl(response.url));
+  }
+  /* https://fetch.spec.whatwg.org/#concept-filtered-response-opaque-redirect */
+  if (response.status === 0 || response.status === 404) {
+    console.log('Reauth detected:', response);
+    throw new ReauthRequested(stripPathFromUrl(response.url));
+  }
+  return response;
+}
+
 async function fetchJiraIssues() {
   const baseUrl = await config.get('jiraBaseUrl');
   if (!baseUrl)
@@ -328,12 +362,14 @@ async function fetchJiraIssues() {
   if (!token)
     throw new MissingConfiguration("Configure a Jira token");
 
-  const response = await fetch(url, {
+  const responseOrReauth = fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json'
-    }
+    },
   });
+  const response = await handleReauth(responseOrReauth);
+
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
   }
@@ -364,8 +400,21 @@ async function renderJiraIssues(container, issues) {
 
 async function renderError(container, error) {
   console.error(error);
-  container.innerHTML = error;
-  container.className = (error instanceof MissingConfiguration) ? "" : "error";
+  if (error instanceof ReauthRequested) {
+    container.innerHTML = "";
+
+    const div_a = document.createElement("a");
+
+    div_a.textContent = "Please authenticate by clicking here."
+    div_a.href = error.location;
+    div_a.target = "_blank";
+
+    container.appendChild(div_a);
+  }
+  else {
+    container.innerHTML = error;
+    container.className = (error instanceof MissingConfiguration) ? "" : "error";
+  }
 }
 
 const dashboardItems = [
