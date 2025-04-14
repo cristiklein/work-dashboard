@@ -353,8 +353,9 @@ async function fetchJiraIssues() {
   const responseOrReauth = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
+    redirect: 'manual',
   });
   const response = handleReauth(responseOrReauth);
 
