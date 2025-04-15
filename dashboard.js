@@ -293,18 +293,18 @@ async function fetchConfluenceTasks() {
   if (!baseUrl)
     throw new MissingConfiguration('Configure the Confluence Base URL.');
   /* TODO: Un-hard-code */
-  const taskListUrl = `${baseUrl}/rest/api/content/32712570?expand=body.view`;
+  const url = `${baseUrl}/rest/api/content/32712570?expand=body.view`;
   const token = await config.getStoredToken('confluence');
   if (!token)
     throw new MissingConfiguration('Configure the Confluence token.');
-  const responseOrReauth = await fetch(taskListUrl, {
+  const responseOrReauth = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Accept': 'application/json'
     },
     mode: 'no-cors',
   });
-  const response = handleReauth(responseOrReauth);
+  const response = handleReauth(url, responseOrReauth);
 
   const data = await response.json();
 
@@ -330,12 +330,12 @@ async function renderConfluenceTasks(container, items) {
 }
 
 /* Resolve the response or throw ReauthRequested */
-function handleReauth(responseOrReauth) {
+function handleReauth(url, responseOrReauth) {
   const response = responseOrReauth;
   /* https://fetch.spec.whatwg.org/#concept-filtered-response-opaque-redirect */
   if (response.status === 0 || response.status === 404) {
     console.log('Reauth detected:', response);
-    throw new ReauthRequested(stripPathFromUrl(response.url));
+    throw new ReauthRequested(stripPathFromUrl(url));
   }
   return response;
 }
@@ -357,7 +357,7 @@ async function fetchJiraIssues() {
     },
     redirect: 'manual',
   });
-  const response = handleReauth(responseOrReauth);
+  const response = handleReauth(url, responseOrReauth);
 
   if (!response.ok) {
     throw new Error(`HTTP error! Status: ${response.status}`);
