@@ -149,7 +149,7 @@ function renderItems(container, items) {
 async function renderGoogleTasks(container, tasks) {
   const demoMode = await config.getDemoMode();
   const items = tasks.map(task => ({
-    text: !demoMode ? task.title : generateLoremWords(),
+    text: !demoMode ? `${task.listTitle} - ${task.title}` : generateLoremWords(),
     webLink: task.webViewLink
   }));
   renderItems(container, items);
