@@ -274,7 +274,7 @@ function parseConfluenceTaskReport(htmlString) {
   const rows = [...doc.querySelectorAll('table.tasks-report tbody tr')];
 
   const tasks = rows.map(row => {
-    const descriptionEl = row.querySelector('td:nth-child(1) .placeholder-inline-tasks');
+    const descriptionEl = row.querySelector('td:nth-child(1)');
     const dueDateEl = row.querySelector('td:nth-child(2)');
     const locationEl = row.querySelector('td:nth-child(4) a');
 
