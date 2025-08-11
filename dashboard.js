@@ -224,6 +224,10 @@ async function fetchGitHubItems(search) {
 
   const data = await response.json();
 
+  if (!response.ok) {
+    throw new Error(data.message || JSON.stringify(data));
+  }
+
   return data.items;
 }
 
