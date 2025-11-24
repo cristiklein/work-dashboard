@@ -348,7 +348,7 @@ async function fetchJiraIssues() {
   const baseUrl = await config.get('jiraBaseUrl');
   if (!baseUrl)
     throw new MissingConfiguration("Configure a Jira Base URL");
-  const query = "assignee = currentUser() AND resolution = Unresolved order by updated DESC";
+  const query = "assignee = currentUser() AND (resolution = Unresolved AND status NOT IN (Accepted)) order by updated DESC";
   const url = `${baseUrl}/rest/api/2/search?jql=${encodeURIComponent(query)}&maxResults=50`;
   const token = await config.getStoredToken('jira');
   if (!token)
